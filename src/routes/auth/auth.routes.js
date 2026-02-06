@@ -1,46 +1,44 @@
 import { randomUUID } from "crypto";
+import jwt from "jsonwebtoken";
 
-const users = new Map();
+const users = [];
 
 export default async function authRoutes(app) {
 
-  // REGISTER
   app.post("/register", async (req, reply) => {
-    const { email, password } = req.body || {};
-
+    const { email, password } = req.body;
     if (!email || !password) {
-      return reply.code(400).send({ error: "Email & password required" });
-    }
-
-    if (users.has(email)) {
-      return reply.code(400).send({ error: "User already exists" });
+      return reply.code(400).send({ error: "Missing fields" });
     }
 
     const user = {
       id: randomUUID(),
       email,
-      password,
-      createdAt: Date.now()
+      password
     };
 
-    users.set(email, user);
-
+    users.push(user);
     return { registered: true, user: { id: user.id, email: user.email } };
   });
 
-  // LOGIN
   app.post("/login", async (req, reply) => {
-    const { email, password } = req.body || {};
+    const { email, password } = req.body;
 
-    const user = users.get(email);
+    const user = users.find(
+      u => u.email === email && u.password === password
+    );
 
-    if (!user || user.password !== password) {
+    if (!user) {
       return reply.code(401).send({ error: "Invalid credentials" });
     }
 
-    return {
-      login: true,
-      user: { id: user.id, email: user.email }
-    };
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      "SECRET_KEY",
+      { expiresIn: "1h" }
+    );
+
+    return { login: true, token };
   });
+
 }
