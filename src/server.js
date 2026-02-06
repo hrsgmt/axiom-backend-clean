@@ -1,22 +1,27 @@
 import Fastify from "fastify";
-import userRoutes from "./routes/users.js";
+import cors from "@fastify/cors";
+
+import usersRoutes from "./routes/users.js";
+import authRoutes from "./routes/auth/auth.routes.js";
 
 const app = Fastify({ logger: true });
 
+await app.register(cors, {
+  origin: true
+});
+
+/* HEALTH */
 app.get("/", async () => {
   return { ok: true, service: "axiom-backend-clean" };
 });
 
 /* USERS */
-await app.register(userRoutes, { prefix: "/api" });
+await app.register(usersRoutes, { prefix: "/api/users" });
 
-const PORT = process.env.PORT || 4000;
+/* AUTH */
+await app.register(authRoutes, { prefix: "/api/auth" });
 
-app.listen({ port: PORT, host: "0.0.0.0" })
-  .then(() => {
-    console.log("🚀 Server running on port", PORT);
-  })
-  .catch(err => {
-    console.error(err);
-    process.exit(1);
-  });
+await app.listen({
+  port: process.env.PORT || 4000,
+  host: "0.0.0.0"
+});
