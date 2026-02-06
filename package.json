@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node src/server.js"
   },
   "dependencies": {
     "fastify": "^4.26.0"
