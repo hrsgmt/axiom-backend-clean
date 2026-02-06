@@ -1,10 +1,14 @@
 import Fastify from "fastify";
+import userRoutes from "./routes/users.js";
 
 const app = Fastify({ logger: true });
 
 app.get("/", async () => {
   return { ok: true, service: "axiom-backend-clean" };
 });
+
+/* USERS */
+await app.register(userRoutes, { prefix: "/api" });
 
 const PORT = process.env.PORT || 4000;
 
