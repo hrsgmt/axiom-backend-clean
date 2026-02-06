@@ -6,20 +6,15 @@ import authRoutes from "./routes/auth/auth.routes.js";
 
 const app = Fastify({ logger: true });
 
-await app.register(cors, {
-  origin: true
-});
+await app.register(cors, { origin: true });
 
-/* HEALTH */
+/* ROUTES */
+await app.register(usersRoutes, { prefix: "/api/users" });
+await app.register(authRoutes, { prefix: "/api/auth" });
+
 app.get("/", async () => {
   return { ok: true, service: "axiom-backend-clean" };
 });
-
-/* USERS */
-await app.register(usersRoutes, { prefix: "/api/users" });
-
-/* AUTH */
-await app.register(authRoutes, { prefix: "/api/auth" });
 
 await app.listen({
   port: process.env.PORT || 4000,
