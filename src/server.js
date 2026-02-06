@@ -10,7 +10,7 @@ await app.register(cors, { origin: true });
 await app.register(usersRoutes, { prefix: "/api" });
 await app.register(authRoutes, { prefix: "/api/auth" });
 
-app.get("/", () => ({ ok: true }));
+app.get("/", () => ({ ok: "auth-enabled" }));
 
 await app.listen({
   port: process.env.PORT || 4000,
